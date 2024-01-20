@@ -1,3 +1,5 @@
+document.getElementById("messageArea");
+
 //import fetch from 'node-fetch';
 // fetch("http://localhost/03_trans_app_backend/get_employees.php", {
 //   method: "GET",
@@ -46,6 +48,7 @@ document
     event.preventDefault();
     const employeeName = document.getElementById("employeeName").value;
     console.log("Add Employee:", employeeName);
+    messageArea.textContent = "Adding employee...";
 
     fetch("http://localhost/03_trans_app_backend/add_employee.php", {
       method: "POST",
@@ -59,6 +62,7 @@ document
       .then((response) => response.text()) // Log the response as text
       .then((text) => {
         console.log(text);
+
         try {
           return JSON.parse(text);
         } catch (error) {
@@ -68,12 +72,15 @@ document
       })
       .then((data) => {
         if (data.status === "success") {
-          // Login was successful
-          console.log("Logged in!");
-          window.location.href = "./employee.html";
+          console.log(data.message.value);
+          messageArea.textContent = data.message;
         } else {
-          // Login failed
-          console.log("Login failed. ", data.status, " ", data.message);
+          console.log(
+            "Employee add unsuccesful. ",
+            data.status,
+            " ",
+            data.message
+          );
         }
       })
       .catch((error) => {
