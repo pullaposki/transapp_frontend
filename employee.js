@@ -1,22 +1,23 @@
-fetch("http://localhost/03_trans_app_backend/get_employees.php", {
-  method: "GET",
-  headers: {
-    "Content-Type": "application/json",
-  },
-})
-  .then((response) => response.text())
-  .then((text) => {
-    console.log(text);
-    return JSON.parse(text);
-  })
-  .then((data) => {
-    console.log(data);
-  })
-  .catch((error) => {
-    console.error("Error:", error);
-  });
+//import fetch from 'node-fetch';
+// fetch("http://localhost/03_trans_app_backend/get_employees.php", {
+//   method: "GET",
+//   headers: {
+//     "Content-Type": "application/json",
+//   },
+// })
+//   .then((response) => response.text())
+//   .then((text) => {
+//     console.log(text);
+//     return JSON.parse(text);
+//   })
+//   .then((data) => {
+//     console.log(data);
+//   })
+//   .catch((error) => {
+//     console.error("Error:", error);
+//   });
 
-// Get the element in your HTML where you want to display the list of employees
+// // Get the element in your HTML where you want to display the list of employees
 // const employeeListElement = document.getElementById("employeeList");
 
 // // Create a list item for each employee and add it to the employee list element
@@ -39,43 +40,52 @@ fetch("http://localhost/03_trans_app_backend/get_employees.php", {
 //   employeeListElement.appendChild(listItem);
 // });
 
-// document
-//   .getElementById("addEmployeeForm")
-//   .addEventListener("submit", function (event) {
-//     event.preventDefault();
-//     const employeeName = document.getElementById("employeeName").value;
-//     console.log("Add Employee:", employeeName);
+document
+  .getElementById("addEmployeeForm")
+  .addEventListener("submit", function (event) {
+    event.preventDefault();
+    const employeeName = document.getElementById("employeeName").value;
+    console.log("Add Employee:", employeeName);
 
-//     fetch("http://localhost/03_trans_app_backend/login.php", {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({
-//         username: username,
-//         password: password,
-//       }),
-//     })
-//       .then((response) => response.json())
-//       .then((data) => {
-//         if (data.status === "success") {
-//           // Login was successful
-//           console.log("Logged in!");
-//           window.location.href = "./employee.html";
-//         } else {
-//           // Login failed
-//           console.log("Login failed. ", data.status, " ", data.message);
-//         }
-//       })
-//       .catch((error) => {
-//         console.error("Error:", error);
-//       });
-//   });
+    fetch("http://localhost/03_trans_app_backend/add_employee.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        employeeName: employeeName,
+      }),
+    })
+      .then((response) => response.text()) // Log the response as text
+      .then((text) => {
+        console.log(text);
+        try {
+          return JSON.parse(text);
+        } catch (error) {
+          console.error("Error parsing JSON:", error);
+          throw error;
+        }
+      })
+      .then((data) => {
+        if (data.status === "success") {
+          // Login was successful
+          console.log("Logged in!");
+          window.location.href = "./employee.html";
+        } else {
+          // Login failed
+          console.log("Login failed. ", data.status, " ", data.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  });
+
 // document
 //   .getElementById("removeEmployeeForm")
 //   .addEventListener("submit", function (event) {
 //     event.preventDefault();
-//     const employeeId = document.getElementById("employeeId").value;
-//     console.log("Remove Employee:", employeeId);
+//     const employeeName = document.getElementById("employeeName").value;
+//     console.log("Remove Employee:", employeeName);
 //     // Here you would send a request to your PHP backend to remove the employee
 //   });
