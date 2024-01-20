@@ -21,6 +21,7 @@ document
         if (data.status === "success") {
           // Login was successful
           console.log("Logged in!");
+          window.location.href = "./employee.html";
         } else {
           // Login failed
           console.log("Login failed. ", data.status, " ", data.message);
