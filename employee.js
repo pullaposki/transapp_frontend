@@ -1,40 +1,42 @@
-document.getElementById("messageArea");
+async function fetchData(url, options) {
+  const response = await fetch(url, options);
+  const text = await response.text();
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    console.error("Error parsing JSON:", error);
+    throw error;
+  }
+}
 
-let employees = [];
-fetch("http://localhost/03_trans_app_backend/get_employees.php", {
+function createEmployeeListItem(employee) {
+  const listItem = document.createElement("li");
+  listItem.textContent = `${employee.first_name} (ID: ${employee.id})`;
+
+  const manageButton = document.createElement("button");
+  manageButton.textContent = "Manage";
+  manageButton.addEventListener("click", function () {
+    console.log(`Manage button clicked for employee ${employee.id}`);
+  });
+
+  listItem.appendChild(manageButton);
+
+  return listItem;
+}
+
+// Fetch employees and update the UI
+fetchData("http://localhost/03_trans_app_backend/get_employees.php", {
   method: "GET",
   headers: {
     "Content-Type": "application/json",
   },
 })
-  .then((response) => response.text())
-  .then((text) => {
-    employees = JSON.parse(text);
+  .then((employees) => {
     console.log(employees);
-    return JSON.parse(text);
-  })
-  .then((data) => {
-    console.log(data);
 
-    // Get the element in your HTML where you want to display the list of employees
     const employeeListElement = document.getElementById("employeeList");
-    // Create a list item for each employee and add it to the employee list element
     employees.forEach((employee) => {
-      const listItem = document.createElement("li");
-      listItem.textContent = `${employee.name} (ID: ${employee.id})`;
-
-      // Create a "Manage" button for each employee
-      const manageButton = document.createElement("button");
-      manageButton.textContent = "Manage";
-      manageButton.addEventListener("click", function () {
-        console.log(`Manage button clicked for employee ${employee.id}`);
-        // Here you can add the code to manage the employee
-      });
-
-      // Add the manage button to the list item
-      listItem.appendChild(manageButton);
-
-      // Add the list item to the employee list element
+      const listItem = createEmployeeListItem(employee);
       employeeListElement.appendChild(listItem);
     });
   })
@@ -42,57 +44,40 @@ fetch("http://localhost/03_trans_app_backend/get_employees.php", {
     console.error("Error:", error);
   });
 
+// Handle form submission
 document
   .getElementById("addEmployeeForm")
-  .addEventListener("submit", function (event) {
+  .addEventListener("submit", async function (event) {
     event.preventDefault();
+
     const employeeName = document.getElementById("employeeName").value;
     console.log("Add Employee:", employeeName);
+
+    const messageArea = document.getElementById("messageArea");
     messageArea.textContent = "Adding employee...";
 
-    fetch("http://localhost/03_trans_app_backend/add_employee.php", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        employeeName: employeeName,
-      }),
-    })
-      .then((response) => response.text()) // Log the response as text
-      .then((text) => {
-        console.log(text);
+    const data = await fetchData(
+      "http://localhost/03_trans_app_backend/add_employee.php",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          employeeName: employeeName,
+        }),
+      }
+    );
 
-        try {
-          return JSON.parse(text);
-        } catch (error) {
-          console.error("Error parsing JSON:", error);
-          throw error;
-        }
-      })
-      .then((data) => {
-        if (data.status === "success") {
-          console.log(data.message.value);
-          messageArea.textContent = data.message;
-        } else {
-          console.log(
-            "Employee add unsuccesful. ",
-            data.status,
-            " ",
-            data.message
-          );
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+    if (data.status === "success") {
+      console.log(data.message.value);
+      messageArea.textContent = data.message;
+    } else {
+      console.log(
+        "Employee add unsuccessful. ",
+        data.status,
+        " ",
+        data.message
+      );
+    }
   });
-
-// document
-//   .getElementById("removeEmployeeForm")
-//   .addEventListener("submit", function (event) {
-//     event.preventDefault();
-//     const employeeName = document.getElementById("employeeName").value;
-//     console.log("Remove Employee:", employeeName);
-//     // Here you would send a request to your PHP backend to remove the employee
-//   });
