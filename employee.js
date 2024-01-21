@@ -60,7 +60,6 @@ function createEmployeeListItem(employee) {
 
         const updateButton = document.createElement("button");
         updateButton.textContent = "update";
-
         updateButton.addEventListener("click", async function () {
           const data = await fetchData(
             `http://localhost/_projects/03_transapp_backend/update_employee.php`,
@@ -92,8 +91,8 @@ function createEmployeeListItem(employee) {
             );
           }
         });
-
         manageArea.appendChild(updateButton);
+
         const br2 = document.createElement("br");
         manageArea.appendChild(br2);
 
@@ -101,6 +100,35 @@ function createEmployeeListItem(employee) {
         manageArea.appendChild(br3);
 
         const deleteButton = document.createElement("button");
+        deleteButton.addEventListener("click", async function () {
+          const data = await fetchData(
+            `http://localhost/_projects/03_transapp_backend/delete_employee.php`,
+            {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                employeeId: employee.id,
+              }),
+            }
+          );
+
+          if (data.status === "success") {
+            console.log(data.message.value);
+            messageArea.textContent = data.message;
+
+            // Remove the listItem
+            listItem.parentElement.removeChild(listItem);
+          } else {
+            console.log(
+              "Employee delete unsuccessful. ",
+              data.status,
+              " ",
+              data.message
+            );
+          }
+        });
         deleteButton.textContent = "Delete";
         manageArea.appendChild(deleteButton);
 
