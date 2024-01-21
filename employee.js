@@ -1,15 +1,4 @@
-const BASE_URL = "http://localhost/_projects/03_transapp_backend";
-
-async function fetchData(url, options) {
-  const response = await fetch(url, options);
-  const text = await response.text();
-  try {
-    return JSON.parse(text);
-  } catch (error) {
-    console.error("Error parsing JSON:", error);
-    throw error;
-  }
-}
+import { getAll, getOne, post, put, deleteOne, BASE_URL } from "./api.js";
 
 function createManageArea(data, employee, listItem, employeeInfo) {
   const manageArea = document.createElement("div");
@@ -59,14 +48,9 @@ function createEmployeeListItem(employee) {
   manageButton.textContent = "Manage";
 
   const handleManageClick = async function () {
-    const data = await fetchData(
-      `${BASE_URL}/get_employee_by_id.php?id=${employee.id}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+    const data = await getOne(
+      `${BASE_URL}/get_employee_by_id.php`,
+      employee.id
     );
 
     if (data.status === "success") {
@@ -121,18 +105,9 @@ function handleSubmit() {
     const messageArea = document.getElementById("messageArea");
     messageArea.textContent = "Adding employee...";
 
-    const data = await fetchData(
-      "http://localhost/_projects/03_transapp_backend/add_employee.php",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          employeeName: employeeName,
-        }),
-      }
-    );
+    const data = await post(`${BASE_URL}/add_employee.php`, {
+      employeeName: employeeName,
+    });
 
     if (data.status === "success") {
       console.log(data.message.value);
@@ -150,14 +125,8 @@ function handleSubmit() {
 
 function handleDeleteClick(employee, listItem) {
   return async function () {
-    const data = await fetchData(`${BASE_URL}/delete_employee.php`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        employeeId: employee.id,
-      }),
+    const data = await deleteOne(`${BASE_URL}/delete_employee.php`, {
+      employeeId: employee.id,
     });
 
     if (data.status === "success") {
@@ -179,15 +148,9 @@ function handleDeleteClick(employee, listItem) {
 
 function handleUpdateClick(employee, nameInput, listItem, employeeInfo) {
   return async function () {
-    const data = await fetchData(`${BASE_URL}/update_employee.php`, {
-      method: "PUT", // Changed from "POST" to "PUT"
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        employeeId: employee.id,
-        employeeName: nameInput.value,
-      }),
+    const data = await put(`${BASE_URL}/update_employee.php`, {
+      employeeId: employee.id,
+      employeeName: nameInput.value,
     });
 
     if (data.status === "success") {
@@ -209,15 +172,7 @@ function handleUpdateClick(employee, nameInput, listItem, employeeInfo) {
 }
 
 function getAndRenderAllEmployees() {
-  fetchData(
-    `${BASE_URL}/get_employees.php`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  )
+  getAll(`${BASE_URL}/get_employees.php`)
     .then((employees) => {
       const employeeListElement = document.getElementById("employeeList");
       employees.forEach((employee) => {
