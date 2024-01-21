@@ -109,7 +109,10 @@ function createEmployeeListItem(employee) {
 
 document
   .getElementById("addEmployeeForm")
-  .addEventListener("submit", async function (event) {
+  .addEventListener("submit", handleSubmit());
+
+function handleSubmit() {
+  return async function (event) {
     event.preventDefault();
 
     const employeeName = document.getElementById("employeeName").value;
@@ -142,7 +145,8 @@ document
         data.message
       );
     }
-  });
+  };
+}
 
 function handleDeleteClick(employee, listItem) {
   return async function () {
@@ -206,7 +210,7 @@ function handleUpdateClick(employee, nameInput, listItem, employeeInfo) {
 
 function getAndRenderAllEmployees() {
   fetchData(
-    "http://localhost/_projects/03_transapp_backend/get_employees.php",
+    `${BASE_URL}/get_employees.php`,
     {
       method: "GET",
       headers: {
