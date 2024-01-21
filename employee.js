@@ -42,7 +42,6 @@ function createEmployeeListItem(employee) {
         manageButton.textContent = "Manage";
         manageButton.removeEventListener("click", closeClick);
 
-        // Re-attach the manageClick event listener
         manageButton.addEventListener("click", manageClick);
       };
 
@@ -61,6 +60,39 @@ function createEmployeeListItem(employee) {
 
         const updateButton = document.createElement("button");
         updateButton.textContent = "update";
+
+        updateButton.addEventListener("click", async function () {
+          const data = await fetchData(
+            `http://localhost/_projects/03_transapp_backend/update_employee.php`,
+            {
+              method: "PUT", // Changed from "POST" to "PUT"
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                employeeId: employee.id,
+                employeeName: nameInput.value,
+              }),
+            }
+          );
+
+          if (data.status === "success") {
+            console.log(data.message.value);
+            messageArea.textContent = data.message;
+
+            // Update the listItem text content and nameInput value
+            listItem.textContent = `${nameInput.value} (ID: ${employee.id})`;
+            nameInput.value = nameInput.value;
+          } else {
+            console.log(
+              "Employee update unsuccessful. ",
+              data.status,
+              " ",
+              data.message
+            );
+          }
+        });
+
         manageArea.appendChild(updateButton);
         const br2 = document.createElement("br");
         manageArea.appendChild(br2);
@@ -95,23 +127,6 @@ function createEmployeeListItem(employee) {
 
   return listItem;
 }
-
-fetchData("http://localhost/_projects/03_transapp_backend/get_employees.php", {
-  method: "GET",
-  headers: {
-    "Content-Type": "application/json",
-  },
-})
-  .then((employees) => {
-    const employeeListElement = document.getElementById("employeeList");
-    employees.forEach((employee) => {
-      const listItem = createEmployeeListItem(employee);
-      employeeListElement.appendChild(listItem);
-    });
-  })
-  .catch((error) => {
-    console.error("Error:", error);
-  });
 
 document
   .getElementById("addEmployeeForm")
@@ -149,3 +164,27 @@ document
       );
     }
   });
+
+function getAndRenderAllEmployees() {
+  fetchData(
+    "http://localhost/_projects/03_transapp_backend/get_employees.php",
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  )
+    .then((employees) => {
+      const employeeListElement = document.getElementById("employeeList");
+      employees.forEach((employee) => {
+        const listItem = createEmployeeListItem(employee);
+        employeeListElement.appendChild(listItem);
+      });
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+}
+
+getAndRenderAllEmployees();
