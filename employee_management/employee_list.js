@@ -40,12 +40,14 @@ function createManageArea(data, employee, listItem, employeeInfo) {
 
 function createEmployeeListItem(employee) {
   const listItem = document.createElement("li");
+  listItem.className = "list-group-item mb-3"; // Use Bootstrap's list group item style and add some margin-bottom
   const employeeInfo = document.createElement("span"); // Create a new span to hold the employee info
   employeeInfo.textContent = `${employee.first_name} (ID: ${employee.id})`;
   listItem.appendChild(employeeInfo); // Append the span to the listItem
 
   const manageButton = document.createElement("button");
   manageButton.textContent = "Manage";
+  manageButton.className = "btn btn-primary mr-2"; // Use Bootstrap's blue button style and add some margin to the right
 
   const handleManageClick = async function () {
     const data = await getOne(
@@ -88,6 +90,8 @@ function createEmployeeListItem(employee) {
 
   manageButton.addEventListener("click", handleManageClick);
   listItem.appendChild(manageButton);
+
+  listItem.insertBefore(manageButton, listItem.firstChild); // Insert the manage button before the first child of the list item
   return listItem;
 }
 
@@ -99,7 +103,8 @@ function handleSubmit() {
   return async function (event) {
     event.preventDefault();
 
-    const employeeName = document.getElementById("employeeName").value;
+    const employeeNameInput = document.getElementById("employeeName");
+    const employeeName = employeeNameInput.value;
     console.log("Add Employee:", employeeName);
 
     const messageArea = document.getElementById("messageArea");
@@ -112,6 +117,11 @@ function handleSubmit() {
     if (data.status === "success") {
       console.log(data.message.value);
       messageArea.textContent = data.message;
+
+      // Clear the input area
+      employeeNameInput.value = "";
+
+      getAndRenderAllEmployees();
     } else {
       console.log(
         "Employee add unsuccessful. ",
@@ -171,18 +181,23 @@ function handleUpdateClick(employee, nameInput, listItem, employeeInfo) {
   };
 }
 
-function getAndRenderAllEmployees() {
-  getAll(`${BASE_URL}/get_employees.php`)
-    .then((employees) => {
-      const employeeListElement = document.getElementById("employeeList");
-      employees.forEach((employee) => {
-        const listItem = createEmployeeListItem(employee);
-        employeeListElement.appendChild(listItem);
-      });
-    })
-    .catch((error) => {
-      console.error("Error:", error);
+async function getAndRenderAllEmployees() {
+  try {
+    const employees = await getAll(`${BASE_URL}/get_employees.php`);
+    const employeeListElement = document.getElementById("employeeList");
+
+    // Clear the list
+    while (employeeListElement.firstChild) {
+      employeeListElement.removeChild(employeeListElement.firstChild);
+    }
+
+    employees.forEach((employee) => {
+      const listItem = createEmployeeListItem(employee);
+      employeeListElement.appendChild(listItem);
     });
+  } catch (error) {
+    console.error("Error:", error);
+  }
 }
 
 getAndRenderAllEmployees();

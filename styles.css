@@ -1,0 +1,10 @@
+/* styles.css */
+
+li.employee-list-item {
+  list-style-type: none;
+  padding: 10px 0;
+}
+
+button.manage-button {
+  /* Add any styles you want for the manage button here */
+}
