@@ -16,9 +16,7 @@ function createEmployeeListItem(employee) {
   const manageButton = document.createElement("button");
   manageButton.textContent = "Manage";
 
-  // Get employee by id
-  manageButton.addEventListener("click", async function () {
-    console.log(`Manage button clicked for employee ${employee.id}`);
+  const manageClick = async function () {
     const data = await fetchData(
       `http://localhost/_projects/03_transapp_backend/get_employee_by_id.php?id=${employee.id}`,
       {
@@ -33,41 +31,54 @@ function createEmployeeListItem(employee) {
       console.log(data.message);
       messageArea.textContent = JSON.stringify(data.message);
 
-      // Change manage button to close button
       manageButton.textContent = "Close";
+      manageButton.removeEventListener("click", manageClick);
 
-      // Create manage area
-      const manageArea = document.createElement("div");
+      const manageArea = createManageArea();
 
-      const br1 = document.createElement("br");
-      manageArea.appendChild(br1);
+      const closeClick = function () {
+        console.log("Close button clicked");
+        listItem.removeChild(manageArea);
+        manageButton.textContent = "Manage";
+        manageButton.removeEventListener("click", closeClick);
 
-      // Create input field for changing the name
-      const nameInput = document.createElement("input");
-      nameInput.type = "text";
-      nameInput.value = data.message.first_name;
-      manageArea.appendChild(nameInput);
+        // Re-attach the manageClick event listener
+        manageButton.addEventListener("click", manageClick);
+      };
 
-      // Create update button
-      const updateButton = document.createElement("button");
-      updateButton.textContent = "update";
-      manageArea.appendChild(updateButton);
-      const br2 = document.createElement("br");
-      manageArea.appendChild(br2);
+      manageButton.addEventListener("click", closeClick);
 
-      const br3 = document.createElement("br");
-      manageArea.appendChild(br3);
+      function createManageArea() {
+        const manageArea = document.createElement("div");
 
-      // Create delete button
-      const deleteButton = document.createElement("button");
-      deleteButton.textContent = "Delete";
-      manageArea.appendChild(deleteButton);
+        const br1 = document.createElement("br");
+        manageArea.appendChild(br1);
 
-      const hr = document.createElement("hr");
-      manageArea.appendChild(hr);
+        const nameInput = document.createElement("input");
+        nameInput.type = "text";
+        nameInput.value = data.message.first_name;
+        manageArea.appendChild(nameInput);
 
-      // Append manage area to list item
-      listItem.appendChild(manageArea);
+        const updateButton = document.createElement("button");
+        updateButton.textContent = "update";
+        manageArea.appendChild(updateButton);
+        const br2 = document.createElement("br");
+        manageArea.appendChild(br2);
+
+        const br3 = document.createElement("br");
+        manageArea.appendChild(br3);
+
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Delete";
+        manageArea.appendChild(deleteButton);
+
+        const hr = document.createElement("hr");
+        manageArea.appendChild(hr);
+
+        listItem.appendChild(manageArea);
+
+        return manageArea;
+      }
     } else {
       console.log(
         "Employee id get unsuccessful. ",
@@ -76,14 +87,15 @@ function createEmployeeListItem(employee) {
         data.message
       );
     }
-  });
+  };
+
+  manageButton.addEventListener("click", manageClick);
 
   listItem.appendChild(manageButton);
 
   return listItem;
 }
 
-// Fetch employees and update the UI
 fetchData("http://localhost/_projects/03_transapp_backend/get_employees.php", {
   method: "GET",
   headers: {
@@ -101,7 +113,6 @@ fetchData("http://localhost/_projects/03_transapp_backend/get_employees.php", {
     console.error("Error:", error);
   });
 
-// Handle form submission
 document
   .getElementById("addEmployeeForm")
   .addEventListener("submit", async function (event) {
