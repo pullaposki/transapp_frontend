@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost/_projects/transapp_backend";
+const BASE_URL = "http://localhost/_projects/transapp_backend/employee_api";
 
 async function fetchData(url, options) {
   let response = new Response();

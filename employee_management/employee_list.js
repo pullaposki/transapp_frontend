@@ -1,4 +1,11 @@
-import { getAll, getOne, post, put, deleteOne, BASE_URL } from "./api.js";
+import {
+  getAll,
+  getOne,
+  post,
+  put,
+  deleteOne,
+  BASE_URL,
+} from "./employee_service.js";
 
 function createManageArea(data, employee, listItem, employeeInfo) {
   const manageArea = document.createElement("div");
@@ -50,7 +57,6 @@ function createEmployeeListItem(employee) {
   manageButton.className = "btn btn-primary mr-2"; // Use Bootstrap's blue button style and add some margin to the right
 
   const handleManageClick = async function () {
-    debugger;
     const data = await getOne(
       `${BASE_URL}/get_employee_by_id.php`,
       employee.id
