@@ -1,8 +1,23 @@
-const BASE_URL = "http://localhost/_projects/03_transapp_backend";
+const BASE_URL = "http://localhost/_projects/transapp_backend";
 
 async function fetchData(url, options) {
-  const response = await fetch(url, options);
-  const text = await response.text();
+  let response = new Response();
+  let request = () => fetch(url, options);
+  let text;
+  
+  try {
+    response = await request();
+    debugger;
+  } catch (err) {
+    console.error("Error fetching response ", err);
+  }
+  try {
+    debugger;
+    text = await response.text();
+  } catch (err) {
+    debugger;
+    console.error("Error getting text data ", err);
+  }
   try {
     return JSON.parse(text);
   } catch (error) {

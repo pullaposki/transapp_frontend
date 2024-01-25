@@ -182,22 +182,18 @@ function handleUpdateClick(employee, nameInput, listItem, employeeInfo) {
 }
 
 async function getAndRenderAllEmployees() {
-  try {
-    const employees = await getAll(`${BASE_URL}/get_employees.php`);
-    const employeeListElement = document.getElementById("employeeList");
+  const employees = await getAll(`${BASE_URL}/get_employees.php`);
+  const employeeListElement = document.getElementById("employeeList");
 
-    // Clear the list
-    while (employeeListElement.firstChild) {
-      employeeListElement.removeChild(employeeListElement.firstChild);
-    }
-
-    employees.forEach((employee) => {
-      const listItem = createEmployeeListItem(employee);
-      employeeListElement.appendChild(listItem);
-    });
-  } catch (error) {
-    console.error("Error:", error);
+  // Clear the list
+  while (employeeListElement.firstChild) {
+    employeeListElement.removeChild(employeeListElement.firstChild);
   }
+
+  employees.forEach((employee) => {
+    const listItem = createEmployeeListItem(employee);
+    employeeListElement.appendChild(listItem);
+  });
 }
 
 getAndRenderAllEmployees();
