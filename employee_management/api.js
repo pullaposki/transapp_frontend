@@ -4,25 +4,24 @@ async function fetchData(url, options) {
   let response = new Response();
   let request = () => fetch(url, options);
   let text;
-  
+
   try {
     response = await request();
-    debugger;
   } catch (err) {
     console.error("Error fetching response ", err);
+    throw err;
   }
   try {
-    debugger;
     text = await response.text();
   } catch (err) {
-    debugger;
     console.error("Error getting text data ", err);
+    throw err;
   }
   try {
     return JSON.parse(text);
-  } catch (error) {
-    console.log("Error parsing JSON:", error);
-    throw error;
+  } catch (err) {
+    console.log("Error parsing JSON:", err);
+    throw err;
   }
 }
 

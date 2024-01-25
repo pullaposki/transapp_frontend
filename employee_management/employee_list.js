@@ -50,15 +50,13 @@ function createEmployeeListItem(employee) {
   manageButton.className = "btn btn-primary mr-2"; // Use Bootstrap's blue button style and add some margin to the right
 
   const handleManageClick = async function () {
+    debugger;
     const data = await getOne(
       `${BASE_URL}/get_employee_by_id.php`,
       employee.id
     );
 
     if (data.status === "success") {
-      console.log(data.message);
-      messageArea.textContent = JSON.stringify(data.message);
-
       manageButton.textContent = "Close";
       manageButton.removeEventListener("click", handleManageClick);
 

@@ -1,6 +1,6 @@
 // import { post } from "./api.js";
 
-// export function createEmployeeForm() {
+// export function addEmployeeForm() {
 //   // Create form
 //   const form = document.createElement("form");
 //   form.id = "addEmployeeForm";
