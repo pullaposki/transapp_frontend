@@ -6,7 +6,7 @@ document
     var username = document.getElementById("username").value;
     var password = document.getElementById("password").value;
 
-    fetch("http://localhost/03_trans_app_backend/login.php", {
+    fetch("http://localhost/03_trans_app_backend/login/login.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
